@@ -15,13 +15,14 @@ import 'assets/third-party/apex-chart.css';
 import App from './App';
 import { store } from 'store';
 import reportWebVitals from './reportWebVitals';
+import history from './utils/browserHistory';
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
 ReactDOM.render(
     <StrictMode>
         <ReduxProvider store={store}>
-            <BrowserRouter basename="/free">
+            <BrowserRouter basename="/" history={history}>
                 <App />
             </BrowserRouter>
         </ReduxProvider>

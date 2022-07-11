@@ -21,11 +21,11 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 // project import
-import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
-
+import { login } from 'store/actions/authThunk';
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
@@ -33,8 +33,9 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
 const AuthLogin = () => {
     const [checked, setChecked] = React.useState(false);
-
     const [showPassword, setShowPassword] = React.useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
     };
@@ -47,18 +48,20 @@ const AuthLogin = () => {
         <>
             <Formik
                 initialValues={{
-                    email: 'info@codedthemes.com',
-                    password: '123456',
+                    email: '',
+                    password: '',
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    password: Yup.string().max(255).required('Password is required')
+                    email: Yup.string().email('Debe ser un email valido').max(255).required('El email es requerido'),
+                    password: Yup.string().max(255).required('La contraseña es requerida')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
                         setStatus({ success: false });
                         setSubmitting(false);
+                        dispatch(login({ email: values.email, password: values.password }));
+                        navigate('/dashboard/');
                     } catch (err) {
                         setStatus({ success: false });
                         setErrors({ submit: err.message });
@@ -79,7 +82,7 @@ const AuthLogin = () => {
                                         name="email"
                                         onBlur={handleBlur}
                                         onChange={handleChange}
-                                        placeholder="Enter email address"
+                                        placeholder="Ingresa email"
                                         fullWidth
                                         error={Boolean(touched.email && errors.email)}
                                     />
@@ -115,7 +118,7 @@ const AuthLogin = () => {
                                                 </IconButton>
                                             </InputAdornment>
                                         }
-                                        placeholder="Enter password"
+                                        placeholder="Ingresa contraseña"
                                     />
                                     {touched.password && errors.password && (
                                         <FormHelperText error id="standard-weight-helper-text-password-login">
@@ -169,9 +172,7 @@ const AuthLogin = () => {
                                     <Typography variant="caption"> Login with</Typography>
                                 </Divider>
                             </Grid>
-                            <Grid item xs={12}>
-                                <FirebaseSocial />
-                            </Grid>
+                            <Grid item xs={12}></Grid>
                         </Grid>
                     </form>
                 )}
